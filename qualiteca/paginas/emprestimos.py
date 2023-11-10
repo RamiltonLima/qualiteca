@@ -3,8 +3,10 @@ import streamlit as st
 from datetime import datetime, timedelta
 import locale
 
-locale.setlocale(locale.LC_ALL, 'pt_BR.utf8')
-
+try:
+    locale.setlocale(locale.LC_ALL, 'pt_BR.utf8')
+except:
+    pass
 
 class Emprestimos:
     nome = 'Empréstimos'
