@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "qualiteca"
+version = "0.1.0"
+description = ""
+authors = ["Ramilton Lima <ramilton.silva.lima@live.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+streamlit = "^1.28.1"
+dropbox = "^11.36.2"
+sqlalchemy = "^2.0.23"
+streamlit-option-menu = "^0.3.6"
+openpyxl = "^3.1.2"
+xlsxwriter = "^3.1.9"
+
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.26.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
