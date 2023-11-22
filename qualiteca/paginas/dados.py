@@ -155,52 +155,51 @@ class Dados:
         st.caption(f'São apenas mantidos até 1 backup dos ultimos {st.secrets.BACKUP_MESES} meses,'+
                    f' um de cada mês, 1 backup dos ultimos {st.secrets.BACKUP_DIAS} dias,'+
                    f' um de cada dia e os ultimos {st.secrets.BACKUP_ULTIMAS} gerados')
-        if st.button('Carregar backups disponiveis'):
-            backup = Backup(st.secrets)
-            lista_backups = backup.listar_relevantes()
-            if not lista_backups.empty:
-                backup_selecionado = st.selectbox(
-                    'Backups',
-                    index=0,
-                    options=lista_backups,
-                    placeholder="Escolha uma versão")
-                if st.button('Restaurar'):
-                    restaurado = backup.restaurar(backup_selecionado)
-                    if restaurado:
-                        st.success('Backup restaurado com sucesso')
-                    else:
-                        st.error('Problemas ao restaurar backup')
+        
+        backup = Backup(st.secrets)
+        lista_backups = backup.listar_relevantes()
+        if not lista_backups.empty:
+            backup_selecionado = st.selectbox(
+                'Backups',
+                index=0,
+                options=lista_backups,
+                placeholder="Escolha uma versão")
+            if st.button('Restaurar'):
+                restaurado = backup.restaurar(backup_selecionado)
+                if restaurado:
+                    st.success('Backup restaurado com sucesso')
+                else:
+                    st.error('Problemas ao restaurar backup')
 
 
     def gerenciar(self):
-        if st.button('Iniciar gerenciamento'):
-            if 'BACKUP' not in st.session_state:
-                st.session_state['BACKUP'] = Backup(st.secrets)
+        if 'BACKUP' not in st.session_state:
+            st.session_state['BACKUP'] = Backup(st.secrets)
 
-            st.markdown('### Gerencie as configurações do backup')
-            st.markdown('#### Autenticação DropBox')
-            st.caption('Após gerar o "link de autenticação" cole-o na caixa abaixo, depois guarde-o nos segredos do aplicação')
-            
-            gerar_link, receber_codigo = st.columns(2)
-            with gerar_link:
-                st.markdown('##### 1. Gerar link')
-                if st.button('Gerar link de autenticação'):
-                    link_autenticacao = st.session_state.BACKUP.dropbox_autorizacao('inicio')
-                    st.markdown(f"Vá até a [Pagina de autenticação]({link_autenticacao})")
-            with receber_codigo:
-                st.markdown('##### 2. Receber o codigo')
-                codigo_gerado = st.text_input('Qual o código gerado?')
-                botao_gerar_refresh_code = st.button('Gerar "refresh code"')
+        st.markdown('### Gerencie as configurações do backup')
+        st.markdown('#### Autenticação DropBox')
+        st.caption('Após gerar o "link de autenticação" cole-o na caixa abaixo, depois guarde-o nos segredos do aplicação')
+        
+        gerar_link, receber_codigo = st.columns(2)
+        with gerar_link:
+            st.markdown('##### 1. Gerar link')
+            if st.button('Gerar link de autenticação'):
+                link_autenticacao = st.session_state.BACKUP.dropbox_autorizacao('inicio')
+                st.markdown(f"Vá até a [Pagina de autenticação]({link_autenticacao})")
+        with receber_codigo:
+            st.markdown('##### 2. Receber o codigo')
+            codigo_gerado = st.text_input('Qual o código gerado?')
+            botao_gerar_refresh_code = st.button('Gerar "refresh code"')
 
-            if botao_gerar_refresh_code:
-                if codigo_gerado.strip() is not None and codigo_gerado.strip() != '':
-                    refresh_token = st.session_state.BACKUP.dropbox_autorizacao('fim', codigo_gerado)
-                    if refresh_token:
-                        st.code(f"DROPBOX_REFRESH_TOKEN = '{refresh_token}'", language='toml')
-                    else:
-                        st.error('Ocorreu algum problema ao gerar o refresh token')
+        if botao_gerar_refresh_code:
+            if codigo_gerado.strip() is not None and codigo_gerado.strip() != '':
+                refresh_token = st.session_state.BACKUP.dropbox_autorizacao('fim', codigo_gerado)
+                if refresh_token:
+                    st.code(f"DROPBOX_REFRESH_TOKEN = '{refresh_token}'", language='toml')
                 else:
                     st.error('Ocorreu algum problema ao gerar o refresh token')
+            else:
+                st.error('Ocorreu algum problema ao gerar o refresh token')
         
     def exportar(self):
         st.markdown('### Exporte os arquivos em um formato offline')
